@@ -25,7 +25,7 @@ else:
 	count = 2999
 
 api = "https://www.xing.com/xing-one/api"
-headers = {'Content-type': 'application/json'}
+headers = {'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'Content-type': 'application/json'}
 cookies_dict = {"login": LOGIN_COOKIE}
 
 if (url.startswith('https://www.xing.com/pages/')):
