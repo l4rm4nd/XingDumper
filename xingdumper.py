@@ -93,10 +93,18 @@ if (url.startswith('https://www.xing.com/pages/')):
 				postdata3 = {"operationName":"getXingId","variables":{"profileId":pagename},"query":"query getXingId($profileId: SlugOrID!, $actionsFilter: [AvailableAction!]) {\n  profileModules(id: $profileId) {\n    __typename\n    xingIdModule(actionsFilter: $actionsFilter) {\n      xingId {\n        status {\n          localizationValue\n          __typename\n        }\n        __typename\n      }\n      __typename\n      ...xingIdContactDetails\n       }\n  }\n}\n\nfragment xingIdContactDetails on XingIdModule {\n  contactDetails {\n    business {\n          email\n      fax {\n        phoneNumber\n   }\n      mobile {\n        phoneNumber\n  }\n      phone {\n        phoneNumber\n   }\n   }\n        __typename\n  }\n  __typename\n}\n"}
 				r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict)
 				response3 = r3.json()
-				email = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['email']
-				fax = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['fax']
-				mobile = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['mobile']
-				phone = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['phone']
+				try:
+					# try to extract contact details
+					email = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['email']
+					fax = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['fax']['phoneNumber']
+					mobile = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['mobile']['phoneNumber']
+					phone = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['phone']['phoneNumber']
+				except:
+					# if contact details are missing in the API response, set to 'None'
+					email = "None"
+					fax = "None"
+					mobile = "None"
+					phone = "None"
 				# print employee information as Comma Separated Values (CSV)
 				print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 			else:
