@@ -35,7 +35,7 @@ Dumping 10 Apple employees from XING API with additional contact details as term
 ````
 python3 xingdumper.py --url https://www.xing.com/pages/appleretaildeutschlandgmbh --count 10 --full
 ````
-**Note**: Additional contact details are most often empty. We Germans take privacy seriously! Further, the details may only be accessible if you belong to the contact list of the crawled employee. Kinda unlikely. 
+**Note**: Contact details are most often empty. We Germans take privacy seriously! Further, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the user.
 
 ## Results
 
