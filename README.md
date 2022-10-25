@@ -8,7 +8,7 @@ With the `--full` CLI flag an additional API request will be made for each emplo
 ## How-To
 1. Sign into www.xing.com and retrieve your ``login`` cookie value e.g. via developer tools
 2. Specify your cookie value in the python script's variable ``LOGIN_COOKIE`` or via the CLI flag ``--cookie``
-3. Browse your company on XING and note the url
+3. Browse your company on XING and note the url. Must be something like https://www.xing.com/pages/appleretaildeutschlandgmbh
 4. Install requirements via ``pip install -r requirements.txt``
 5. Run the Python script and enjoy results
 
