@@ -1,5 +1,5 @@
 # XingDumper
-Python 3 script to dump company employees from XING API. Perfect OSINT tool ;-)
+Python 3 script to dump company employees from XING API.
 
 The results contain firstname, lastname, position, gender, location and a user's profile link. Only 2 API calls are required to retrieve all employees. 
 
@@ -23,6 +23,11 @@ optional arguments:
   --cookie <cookie>  XING 'login' cookie for authentication
   --full             Dump additional contact details (slow) - email, phone, fax, mobile
   --quiet            Show employee results only
+````
+
+## Docker Run Examples
+````
+docker run --rm l4rm4nd/xingdumper:latest --url <xing-url> --cookie <cookie>
 ````
 
 ## Examples
