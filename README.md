@@ -69,6 +69,7 @@ The script will return employee data as semi-colon separated values (like CSV):
 [i] Company X-ID: 271572.8873b4
 [i] Company Slug: appleretaildeutschlandgmbh
 [i] Dumping Date: 24/12/2021 13:37:00
+[i] Email Format: {0}.{1}@apple.de
 
 Firstname;Lastname;Email;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile
 Mina;Abdallah;mina.abdallah@apple.de;RFIC Design Engineer;MALE;Unterhaching,Deutschland;None;None;None;None;https://www.xing.com/profile/Mina_Abdallah
