@@ -1,22 +1,38 @@
 import requests
 import json
 import argparse
+from argparse import RawTextHelpFormatter
 from datetime import datetime
 
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 
-parser = argparse.ArgumentParser("xingdumper.py")
+format_examples = '''
+ [1] john.doe@example.com > '{0}.{1}@example.com'
+ [2] j.doe@example.com > '{0[0]}.{1}@example.com'
+ [3] jdoe@example.com > '{0[0]}{1}@example.com'
+ [4] doe@example.com > '{1}@example.com'
+ [5] john@example.com > '{0}@example.com'
+ [6] jd@example.com > '{0[0]}{1[0]}@example.com'
+'''
+
+parser = argparse.ArgumentParser("xingdumper.py", formatter_class=RawTextHelpFormatter)
 parser.add_argument("--url", metavar='<xing-url>', help="A XING company url - https://xing.com/pages/<company>", type=str, required=True)
 parser.add_argument("--count", metavar='<number>', help="Amount of employees to extract - max. 2999", type=int, required=False)
 parser.add_argument("--cookie", metavar='<cookie>', help="XING 'login' cookie for authentication", type=str, required=False,)
 parser.add_argument("--full", help="Dump additional contact details (slow) - email, phone, fax, mobile", required=False, action='store_true')
 parser.add_argument("--quiet", help="Show employee results only", required=False, action='store_true')
+parser.add_argument("--email-format", help="Python string format for emails; for example:"+format_examples, required=False, type=str)
 
 args = parser.parse_args()
 url = args.url
 
 if (args.cookie):
 	LOGIN_COOKIE = args.cookie
+
+if (args.email_format):
+	mailformat = args.email_format
+else:
+	mailformat = False
 
 if (args.count and args.count < 3000):
 	count = args.count
@@ -66,10 +82,16 @@ if (url.startswith('https://www.xing.com/pages/')):
 			print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
 			print()
 
-		if args.full:
-			legende = "Firstname;Lastname;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile"
+		if not mailformat:
+			if args.full:
+				legende = "Firstname;Lastname;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile"
+			else:
+				legende = "Firstname;Lastname;Position;Gender;Location;Profile"
 		else:
-			legende = "Firstname;Lastname;Position;Gender;Location;Profile"
+			if args.full:
+				legende = "Firstname;Lastname;Email;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile"
+			else:
+				legende = "Firstname;Lastname;Email;Position;Gender;Location;Profile"
 		
 		print(legende)
 
@@ -105,11 +127,18 @@ if (url.startswith('https://www.xing.com/pages/')):
 					fax = "None"
 					mobile = "None"
 					phone = "None"
-				# print employee information as Comma Separated Values (CSV)
-				print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
+				
+				if not mailformat:
+					# print employee information as Comma Separated Values (CSV)
+					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
+				else:
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower(),lastname.lower()) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 			else:
-				print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
-
+				if not mailformat:
+					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
+				else:
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower(),lastname.lower()) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
+		
 		if not args.quiet:
 			print()
 			print("[i] Successfully crawled " + str(dump_count) + " " + response1["data"]["entityPageEX"]["title"] + " employees. Hurray ^_-")
