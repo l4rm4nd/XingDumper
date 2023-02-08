@@ -3,7 +3,7 @@ Python 3 script to dump company employees from XING API.
 
 The results contain firstname, lastname, position, gender, location and a user's profile link. Only 2 API calls are required to retrieve all employees. 
 
-With the `--full` CLI flag an additional API request will be made for each employee to retrieve contact details such as email, fax, mobile and phone number. However, this data is most often unset by XING users.
+With the `--full` CLI flag an additional API request will be made for each employee to retrieve contact details such as email, fax, mobile and phone number. However, this data is most often unset by XING users. With the `--mail-format` CLI flag one can define a Python string format to auto generate email addresses based on the retrieved first and last name.
 
 ## How-To
 1. Sign into www.xing.com and retrieve your ``login`` cookie value e.g. via developer tools
