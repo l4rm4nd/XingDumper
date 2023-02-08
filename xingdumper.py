@@ -80,6 +80,8 @@ if (url.startswith('https://www.xing.com/pages/')):
 			print("[i] Company X-ID: " + companyID)
 			print("[i] Company Slug: " + company)
 			print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+			if mailformat:
+				print("[i] Email Format: " + mailformat)
 			print()
 
 		if not mailformat:
