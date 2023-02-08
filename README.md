@@ -14,31 +14,39 @@ With the `--full` CLI flag an additional API request will be made for each emplo
 
 ## Usage
 ````
-usage: xingdumper.py [-h] --url <xing-url> [--count <number>] [--cookie <cookie>] [--full] [--quiet]
+usage: xingdumper.py [-h] --url <xing-url> [--count <number>] [--cookie <cookie>] [--full] [--quiet] [--email-format EMAIL_FORMAT]
 
-optional arguments:
-  -h, --help         show this help message and exit
-  --url <xing-url>   A XING company url - https://xing.com/pages/<company>
-  --count <number>   Amount of employees to extract - max. 2999
-  --cookie <cookie>  XING 'login' cookie for authentication
-  --full             Dump additional contact details (slow) - email, phone, fax, mobile
-  --quiet            Show employee results only
+options:
+  -h, --help            show this help message and exit
+  --url <xing-url>      A XING company url - https://xing.com/pages/<company>
+  --count <number>      Amount of employees to extract - max. 2999
+  --cookie <cookie>     XING 'login' cookie for authentication
+  --full                Dump additional contact details (slow) - email, phone, fax, mobile
+  --quiet               Show employee results only
+  --email-format EMAIL_FORMAT
+                        Python string format for emails; for example:
+                         [1] john.doe@example.com > '{0}.{1}@example.com'
+                         [2] j.doe@example.com > '{0[0]}.{1}@example.com'
+                         [3] jdoe@example.com > '{0[0]}{1}@example.com'
+                         [4] doe@example.com > '{1}@example.com'
+                         [5] john@example.com > '{0}@example.com'
+                         [6] jd@example.com > '{0[0]}{1[0]}@example.com'
 ````
 
 ## Docker Run Examples
 ````
-docker run --rm l4rm4nd/xingdumper:latest --url <xing-url> --cookie <cookie>
+docker run --rm l4rm4nd/xingdumper:latest --url <xing-url> --cookie <cookie> --mail-format '{0}.{1}@example.com'
 ````
 
 ## Examples
 
 Dumping all Audi employees from XING API (max. 3000) into outfile using `--quiet` mode:
 ````
-python3 xingdumper.py --url https://www.xing.com/pages/audiag --quiet > audi_employees.out
+python3 xingdumper.py --url https://www.xing.com/pages/audiag --quiet' > audi_employees.out
 ````
-Dumping 10 Apple employees from XING API with additional contact details as terminal output:
+Dumping 10 Apple employees from XING API with additional contact details as terminal output and auto generate email with provided string format::
 ````
-python3 xingdumper.py --url https://www.xing.com/pages/appleretaildeutschlandgmbh --count 10 --full
+python3 xingdumper.py --url https://www.xing.com/pages/appleretaildeutschlandgmbh --count 10 --full --mail-format '{0}.{1}@apple.de'
 ````
 **Note**: Contact details are most often empty. We Germans take privacy seriously! Further, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the user.
 
@@ -63,9 +71,9 @@ The script will return employee data as semi-colon separated values (like CSV):
 [i] Company Slug: appleretaildeutschlandgmbh
 [i] Dumping Date: 24/12/2021 13:37:00
 
-Firstname;Lastname;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile
-Mina;Abdallah;RFIC Design Engineer;MALE;Unterhaching,Deutschland;None;None;None;None;https://www.xing.com/profile/Mina_Abdallah
-Isma;Abdan;Gabelstaplerfahrer;MALE;Huelva,Spanien;None;None;None;None;https://www.xing.com/profile/Isma_Abdan
+Firstname;Lastname;Email;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile
+Mina;Abdallah;mina.abdallah@apple.de;RFIC Design Engineer;MALE;Unterhaching,Deutschland;None;None;None;None;https://www.xing.com/profile/Mina_Abdallah
+Isma;Abdan;isma.abdan@apple.de;Gabelstaplerfahrer;MALE;Huelva,Spanien;None;None;None;None;https://www.xing.com/profile/Isma_Abdan
 
 [i] Successfully crawled 2 Apple employees. Hurray ^_-
 ````
