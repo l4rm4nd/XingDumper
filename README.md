@@ -23,8 +23,7 @@ options:
   --cookie <cookie>     XING 'login' cookie for authentication
   --full                Dump additional contact details (slow) - email, phone, fax, mobile
   --quiet               Show employee results only
-  --email-format EMAIL_FORMAT
-                        Python string format for emails; for example:
+  --email-format        Python string format for emails; for example:
                          [1] john.doe@example.com > '{0}.{1}@example.com'
                          [2] j.doe@example.com > '{0[0]}.{1}@example.com'
                          [3] jdoe@example.com > '{0[0]}{1}@example.com'
