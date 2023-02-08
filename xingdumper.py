@@ -134,12 +134,12 @@ if (url.startswith('https://www.xing.com/pages/')):
 					# print employee information as Comma Separated Values (CSV)
 					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower(),lastname.lower()) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".",""),lastname.lower().replace(".","")) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 			else:
 				if not mailformat:
 					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
 				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower(),lastname.lower()) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".",""),lastname.lower().replace(".","")) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
 		
 		if not args.quiet:
 			print()
