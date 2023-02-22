@@ -41,11 +41,11 @@ docker run --rm l4rm4nd/xingdumper:latest --url <xing-url> --cookie <cookie> --e
 
 Dumping all Audi employees from XING API (max. 3000) into outfile using `--quiet` mode:
 ````
-python3 xingdumper.py --url https://www.xing.com/pages/audiag --quiet' > audi_employees.out
+python3 xingdumper.py --url 'https://www.xing.com/pages/audiag' --quiet > audi_employees.out
 ````
 Dumping 10 Apple employees from XING API with additional contact details as terminal output and auto generate email with provided string format::
 ````
-python3 xingdumper.py --url https://www.xing.com/pages/appleretaildeutschlandgmbh --count 10 --full --email-format '{0}.{1}@apple.de'
+python3 xingdumper.py --url 'https://www.xing.com/pages/appleretaildeutschlandgmbh' --count 10 --full --email-format '{0}.{1}@apple.de'
 ````
 **Note**: Contact details are most often empty. We Germans take privacy seriously! Further, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the user.
 
