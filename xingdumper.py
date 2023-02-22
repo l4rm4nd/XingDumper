@@ -6,6 +6,9 @@ from datetime import datetime
 
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 
+# converting german umlauts
+special_char_map = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
+
 format_examples = '''
  [1] john.doe@example.com > '{0}.{1}@example.com'
  [2] j.doe@example.com > '{0[0]}.{1}@example.com'
@@ -134,12 +137,12 @@ if (url.startswith('https://www.xing.com/pages/')):
 					# print employee information as Comma Separated Values (CSV)
 					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".",""),lastname.lower().replace(".","")) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".","").translate(special_char_map),lastname.lower().replace(".","").translate(special_char_map)) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
 			else:
 				if not mailformat:
 					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
 				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".",""),lastname.lower().replace(".","")) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
+					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".","").translate(special_char_map),lastname.lower().replace(".","").translate(special_char_map)) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
 		
 		if not args.quiet:
 			print()
