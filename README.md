@@ -17,7 +17,7 @@
 
 XingDumper is a Python 3 script that dumps employee data from the XING social networking platform.
 
-The results contain firstname, lastname, position, gender, location and a user's profile link. Only 2 API calls are required to retrieve all employees.
+The results contain firstname, lastname, position, gender, location and a user's profile link. Only 2 API calls are required to retrieve all employees. With the `--email-format` CLI flag one can define a Python string format to auto generate email addresses based on the retrieved first and last name.
 
 ## ✨ Requirements
 
