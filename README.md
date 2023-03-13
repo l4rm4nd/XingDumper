@@ -26,7 +26,7 @@ XingDumper talks with the unofficial XING API, which requires authentication. Th
 #### Retrieving XING Cookie
 
 1. Sign into www.xing.com and retrieve your ``login`` cookie value e.g. via developer tools
-2. Specify your cookie value either in the python script's variable ``LOGIN_COOKIE`` or during runtime via the CLI flag ``--cookie``
+2. Specify your cookie value either in the python script's variable ``LOGIN_COOKIE`` or temporarily during runtime via the CLI flag ``--cookie``
 
 #### Retrieving XING Company URL
 
