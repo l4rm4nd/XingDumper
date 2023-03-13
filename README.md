@@ -54,9 +54,6 @@ options:
                          [6] jd@example.com > '{0[0]}{1[0]}@example.com'
 ````
 
-> **Note**:
-> Dumped contact details via `--full` are most often empty. Germans seem to take privacy seriously! Furthermore, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the user.
-
 ### 🐳 Example 1 - Docker Run
 
 ````
@@ -97,3 +94,9 @@ Isma;Abdan;isma.abdan@apple.de;Gabelstaplerfahrer;MALE;Huelva,Spanien;None;None;
 
 [i] Successfully crawled 2 Apple employees. Hurray ^_-
 ````
+
+## 💥 Limitations
+
+Dumped contact details via `--full` are most often empty. Germans seem to take privacy very seriously. 
+
+Furthermore, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however, the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the crawled employee.
