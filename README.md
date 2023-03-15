@@ -21,7 +21,7 @@ The results contain firstname, lastname, position, gender, location and a user's
 
 ## ✨ Requirements
 
-XingDumper talks with the unofficial XING API, which requires authentication. Therefore, you must have a valid XING user account. To keep it simple, XingDumper just excepts a cookie value provided by you. Doing it this way, even 2FA protected accounts are supported. Furthermore, you are tasked to provide a XING company URL to dump employees from.
+XingDumper talks with the unofficial XING API, which requires authentication. Therefore, you must have a valid XING user account. To keep it simple, XingDumper just expects a cookie value provided by you. Doing it this way, even 2FA protected accounts are supported. Furthermore, you are tasked to provide a XING company URL to dump employees from.
 
 #### Retrieving XING Cookie
 
