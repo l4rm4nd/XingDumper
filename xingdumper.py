@@ -4,6 +4,7 @@ import argparse
 from argparse import RawTextHelpFormatter
 from datetime import datetime
 
+# you may store your session cookie here persistently
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 
 # converting german umlauts
