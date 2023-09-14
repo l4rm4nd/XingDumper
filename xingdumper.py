@@ -149,12 +149,10 @@ if (url.startswith('https://www.xing.com/pages/')):
 			print("[i] Successfully crawled " + str(dump_count) + " " + response1["data"]["entityPageEX"]["title"] + " employees. Hurray ^_-")
 	
 	except Exception as e:
-		# likely authorization error due to incorrect 'login' cookie
-		# otherwise the script is broken or the api has been changed
 		print()
-		print("[!] Authentication required.")
+		print("[!] Exception. Either API has changed and this script is broken or authentication failed.")
 		print("    > Set 'LOGIN_COOKIE' variable or use the '--cookie' CLI flag!")
-		#print("[debug] " + str(e))
+		print("[debug] " + str(e))
 else:
 	print()
 	print("[!] Invalid URL provided.")
