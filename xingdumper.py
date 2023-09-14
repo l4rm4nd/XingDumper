@@ -151,7 +151,7 @@ if (url.startswith('https://www.xing.com/pages/')):
 	except Exception as e:
 		print()
 		print("[!] Exception. Either API has changed and this script is broken or authentication failed.")
-		print("    > Set 'LOGIN_COOKIE' variable or use the '--cookie' CLI flag!")
+		print("    > Set 'LOGIN_COOKIE' variable permanently in script or use the '--cookie' CLI flag!")
 		print("[debug] " + str(e))
 else:
 	print()
