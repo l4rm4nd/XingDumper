@@ -57,7 +57,7 @@ options:
 ### 🐳 Example 1 - Docker Run
 
 ````
-docker run --rm l4rm4nd/xingdumper:latest --url https://www.xing.com/pages/audiag --cookie <cookie> --email-format '{0}.{1}@apple.de'
+docker run --rm l4rm4nd/xingdumper:latest --url https://www.xing.com/pages/audiag --cookie '<cookie>' --email-format '{0}.{1}@apple.de'
 ````
 
 ### 🐍 Example 2 - Native Python
@@ -66,7 +66,7 @@ docker run --rm l4rm4nd/xingdumper:latest --url https://www.xing.com/pages/audia
 # install dependencies
 pip install -r requirements.txt
 
-python3 xingdumper.py --url https://www.xing.com/pages/audiag --cookie <cookie> --email-format '{0}.{1}@apple.de
+python3 xingdumper.py --url https://www.xing.com/pages/audiag --cookie '<cookie>' --email-format '{0}.{1}@apple.de'
 ````
 
 ## 💎 Outputs
