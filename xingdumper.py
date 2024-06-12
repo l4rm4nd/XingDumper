@@ -11,12 +11,11 @@ LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 special_char_map = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
 
 format_examples = '''
- [1] john.doe@example.com > '{0}.{1}@example.com'
- [2] j.doe@example.com > '{0[0]}.{1}@example.com'
- [3] jdoe@example.com > '{0[0]}{1}@example.com'
- [4] doe@example.com > '{1}@example.com'
- [5] john@example.com > '{0}@example.com'
- [6] jd@example.com > '{0[0]}{1[0]}@example.com'
+--email-format '{0}.{1}@example.com' --> john.doe@example.com
+--email-format '{0[0]}.{1}@example.com' --> j.doe@example.com
+--email-format '{1}@example.com' --> doe@example.com
+--email-format '{0}@example.com' --> john@example.com
+--email-format '{0[0]}{1[0]}@example.com' --> jd@example.com
 '''
 
 parser = argparse.ArgumentParser("xingdumper.py", formatter_class=RawTextHelpFormatter)
