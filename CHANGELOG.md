@@ -1,4 +1,13 @@
-# 0.1.0 (2024-07-19)
+## [0.1.1](https://github.com/l4rm4nd/XingDumper/compare/v0.1.0...v0.1.1) (2024-07-19)
+
+
+### Bug Fixes
+
+* **ci:** minor version series tag for dockerhub ([ba18e0c](https://github.com/l4rm4nd/XingDumper/commit/ba18e0c3534f11dbd809e9f507ddf47314ce294b))
+
+
+
+# [0.1.0](https://github.com/l4rm4nd/XingDumper/compare/b83eb8ffe5b24c6f220536e0e458ea8e26bc9f76...v0.1.0) (2024-07-19)
 
 
 ### Features
