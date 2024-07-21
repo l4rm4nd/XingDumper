@@ -1,3 +1,12 @@
+## [0.1.2](https://github.com/l4rm4nd/XingDumper/compare/v0.1.1...v0.1.2) (2024-07-21)
+
+
+### Bug Fixes
+
+* **docker:** upgrade base python image ([8603e68](https://github.com/l4rm4nd/XingDumper/commit/8603e682c0971bce4bb3a5fc20867a6fed919c68))
+
+
+
 ## [0.1.1](https://github.com/l4rm4nd/XingDumper/compare/v0.1.0...v0.1.1) (2024-07-19)
 
 
