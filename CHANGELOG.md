@@ -1,3 +1,12 @@
+## [0.1.3](https://github.com/l4rm4nd/XingDumper/compare/v0.1.2...v0.1.3) (2024-07-25)
+
+
+### Bug Fixes
+
+* **python:** add timeouts for requests ([50b53d1](https://github.com/l4rm4nd/XingDumper/commit/50b53d1a144bd5bfaf13755dea945731816b4d51))
+
+
+
 ## [0.1.2](https://github.com/l4rm4nd/XingDumper/compare/v0.1.1...v0.1.2) (2024-07-21)
 
 
