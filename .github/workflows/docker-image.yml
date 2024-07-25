@@ -61,7 +61,7 @@ jobs:
         run: pip install bandit
 
       - name: Run Bandit
-        run: bandit -r linkedindumper.py --severity-level medium
+        run: bandit -r xingdumper.py --severity-level medium
 
   deploy:
     name: Deploy Image
