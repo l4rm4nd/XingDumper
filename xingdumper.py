@@ -54,14 +54,14 @@ if (url.startswith('https://www.xing.com/pages/')):
 
 		# retrieve company id from the api
 		postdata1 = {"operationName":"EntitySubpage","variables":{"id":company,"moduleType":"employees"},"query":"query EntitySubpage($id: SlugOrID!, ) {\n entityPageEX(id: $id) {\n ... on EntityPage {\n slug\n  title\n context {\n  companyId\n }\n  }\n }\n}\n"}
-		r = requests.post(api, data=json.dumps(postdata1), headers=headers, cookies=cookies_dict)
+		r = requests.post(api, data=json.dumps(postdata1), headers=headers, cookies=cookies_dict, timeout=10)
 		response1 = r.json()
 
 		companyID = response1["data"]["entityPageEX"]["context"]["companyId"]
 		
 		# retrieve employee information from the api based on previously obtained company id
 		postdata2 = {"operationName":"Employees","variables":{"consumer":"","id":companyID,"first":count,"query":{"consumer":"web.entity_pages.employees_subpage","sort":"CONNECTION_DEGREE"}},"query":"query Employees($id: SlugOrID!, $first: Int, $after: String, $query: CompanyEmployeesQueryInput!, $consumer: String! = \"\", $includeTotalQuery: Boolean = false) {\n  company(id: $id) {\n id\n totalEmployees: employees(first: 0, query: {consumer: $consumer}) @include(if: $includeTotalQuery) {\n total\n }\n employees(first: $first, after: $after, query: $query) {\n total\n edges {\n node {\n profileDetails {\n id\n firstName\n lastName\n displayName\n gender\n pageName\n location {\n displayLocation\n  }\n occupations {\n subline\n }\n }\n }\n }\n }\n }\n}\n"}
-		r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict)
+		r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict, timeout=10)
 		response2 = r2.json()
 
 		if not args.quiet:
@@ -118,7 +118,7 @@ if (url.startswith('https://www.xing.com/pages/')):
 			if args.full:
 				# dump additional contact details for each employee. Most often is "None", so no default api queries for this data
 				postdata3 = {"operationName":"getXingId","variables":{"profileId":pagename},"query":"query getXingId($profileId: SlugOrID!, $actionsFilter: [AvailableAction!]) {\n  profileModules(id: $profileId) {\n    __typename\n    xingIdModule(actionsFilter: $actionsFilter) {\n      xingId {\n        status {\n          localizationValue\n          __typename\n        }\n        __typename\n      }\n      __typename\n      ...xingIdContactDetails\n       }\n  }\n}\n\nfragment xingIdContactDetails on XingIdModule {\n  contactDetails {\n    business {\n          email\n      fax {\n        phoneNumber\n   }\n      mobile {\n        phoneNumber\n  }\n      phone {\n        phoneNumber\n   }\n   }\n        __typename\n  }\n  __typename\n}\n"}
-				r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict)
+				r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict, timeout=10)
 				response3 = r3.json()
 				try:
 					# try to extract contact details
