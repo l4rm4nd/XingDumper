@@ -99,9 +99,10 @@ Isma;Abdan;isma.abdan@apple.de;Gabelstaplerfahrer;MALE;Huelva,Spanien;None;None;
 
 ## 💥 Limitations
 
-Dumped contact details via `--full` are most often empty. Germans seem to take privacy very seriously. 
-
-## 🤖 Repo Statistics
-![Alt](https://repobeats.axiom.co/api/embed/cb3bbff6ff44db8f1aa645d442c4889c9c697073.svg "Repobeats analytics image")
+Dumped contact details via `--full` are most often empty. Germans seem to take privacy very seriously.
 
 Furthermore, the details may only be accessible if you already belong to the contact list of the crawled employee. Kinda unlikely, however, the default privacy settings of XING would allow a retrival, if the data is configured and the privacy settings not changed by the crawled employee.
+
+## 🤖 Repo Statistics
+
+![Alt](https://repobeats.axiom.co/api/embed/cb3bbff6ff44db8f1aa645d442c4889c9c697073.svg "Repobeats analytics image")
