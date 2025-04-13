@@ -53,19 +53,31 @@ if url.startswith('https://www.xing.com/pages/'):
         r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict, timeout=200)
         response2 = r2.json()
 
+        print("""\
+
+▒██   ██▒ ██▓ ███▄    █   ▄████ ▓█████▄  █    ██  ███▄ ▄███▓ ██▓███  ▓█████  ██▀███  
+▒▒ █ █ ▒░▓██▒ ██ ▀█   █  ██▒ ▀█▒▒██▀ ██▌ ██  ▓██▒▓██▒▀█▀ ██▒▓██░  ██▒▓█   ▀ ▓██ ▒ ██▒
+░░  █   ░▒██▒▓██  ▀█ ██▒▒██░▄▄▄░░██   █▌▓██  ▒██░▓██    ▓██░▓██░ ██▓▒▒███   ▓██ ░▄█ ▒
+ ░ █ █ ▒ ░██░▓██▒  ▐▌██▒░▓█  ██▓░▓█▄   ▌▓▓█  ░██░▒██    ▒██ ▒██▄█▓▒ ▒▒▓█  ▄ ▒██▀▀█▄  
+▒██▒ ▒██▒░██░▒██░   ▓██░░▒▓███▀▒░▒████▓ ▒▒█████▓ ▒██▒   ░██▒▒██▒ ░  ░░▒████▒░██▓ ▒██▒
+▒▒ ░ ░▓ ░░▓  ░ ▒░   ▒ ▒  ░▒   ▒  ▒▒▓  ▒ ░▒▓▒ ▒ ▒ ░ ▒░   ░  ░▒▓▒░ ░  ░░░ ▒░ ░░ ▒▓ ░▒▓░
+░░   ░▒ ░ ▒ ░░ ░░   ░ ▒░  ░   ░  ░ ▒  ▒ ░░▒░ ░ ░ ░  ░      ░░▒ ░      ░ ░  ░  ░▒ ░ ▒░
+ ░    ░   ▒ ░   ░   ░ ░ ░ ░   ░  ░ ░  ░  ░░░ ░ ░ ░      ░   ░░          ░     ░░   ░ 
+ ░    ░   ░           ░       ░    ░       ░            ░               ░  ░  by LRVT
+        """)
+
         employees = []
 
-        if not args.output_json and not args.output_csv:
+        if args.output_json and args.output_csv:
             print()
-            print("[i] Company Name: " + companyTitle)
-            print("[i] Company X-ID: " + companyID)
-            print("[i] Company Slug: " + company)
-            print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-            if mailformat:
-                print("[i] Email Format: " + mailformat)
-            print()
-        else:
-        	print()
+
+        print("[i] Company Name: " + companyTitle)
+        print("[i] Company X-ID: " + companyID)
+        print("[i] Company Slug: " + company)
+        print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        if mailformat:
+            print("[i] Email Format: " + mailformat)
+        print()
 
         for emp in response2['data']['company']['employees']['edges']:
             pd = emp['node']['profileDetails']
