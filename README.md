@@ -36,7 +36,7 @@ XingDumper talks with the unofficial XING API, which requires authentication. Th
 ## 🎓 Usage
 
 ````
-usage: xingdumper.py [-h] --url <xing-url> [--count <number>] [--cookie <cookie>] [--full] [--quiet] [--email-format EMAIL_FORMAT]
+usage: xingdumper.py [-h] --url <xing-url> [--count <number>] [--cookie <cookie>] [--full] [--quiet] [--email-format <mail-format>] [--output-json <json-file>] [--output-csv <csv-file>]
 
 options:
   -h, --help            show this help message and exit
@@ -44,7 +44,7 @@ options:
   --count <number>      Amount of employees to extract - max. 2999
   --cookie <cookie>     XING 'login' cookie for authentication
   --full                Dump additional contact details (slow) - email, phone, fax, mobile
-  --email-format        Python string format for emails; for example:
+  --email-format <mail-format>       Python string format for emails; for example:
                         --email-format '{0}.{1}@example.com' --> john.doe@example.com
                         --email-format '{0[0]}.{1}@example.com' --> j.doe@example.com
                         --email-format '{1}@example.com' --> doe@example.com
