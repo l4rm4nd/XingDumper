@@ -1,3 +1,10 @@
+## [0.2.0](https://github.com/l4rm4nd/XingDumper/compare/v0.1.4...v0.2.0) (2025-04-13)
+
+
+### Features
+
+* add output options ([8c821bd](https://github.com/l4rm4nd/XingDumper/commit/8c821bddc43c3cc44f0eea9bb8df70cd3c731a83))
+
 ## [0.1.4](https://github.com/l4rm4nd/XingDumper/compare/v0.1.3...v0.1.4) (2024-07-30)
 
 
@@ -25,12 +32,4 @@
 ### Bug Fixes
 
 * **ci:** minor version series tag for dockerhub ([ba18e0c](https://github.com/l4rm4nd/XingDumper/commit/ba18e0c3534f11dbd809e9f507ddf47314ce294b))
-
-## [0.1.0](https://github.com/l4rm4nd/XingDumper/compare/b83eb8ffe5b24c6f220536e0e458ea8e26bc9f76...v0.1.0) (2024-07-19)
-
-
-### Features
-
-* rework gh ci workflow ([fb54230](https://github.com/l4rm4nd/XingDumper/commit/fb54230053dad8e13ec8e27ba4d42d25314b3dd4))
-* rework github ci ([b83eb8f](https://github.com/l4rm4nd/XingDumper/commit/b83eb8ffe5b24c6f220536e0e458ea8e26bc9f76))
 
