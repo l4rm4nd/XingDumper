@@ -44,13 +44,16 @@ options:
   --count <number>      Amount of employees to extract - max. 2999
   --cookie <cookie>     XING 'login' cookie for authentication
   --full                Dump additional contact details (slow) - email, phone, fax, mobile
-  --quiet               Show employee results only
   --email-format        Python string format for emails; for example:
                         --email-format '{0}.{1}@example.com' --> john.doe@example.com
                         --email-format '{0[0]}.{1}@example.com' --> j.doe@example.com
                         --email-format '{1}@example.com' --> doe@example.com
                         --email-format '{0}@example.com' --> john@example.com
                         --email-format '{0[0]}{1[0]}@example.com' --> jd@example.com
+  --output-json <json-file>
+                        Store results in json output file
+  --output-csv <csv-file>
+                        Store results in csv output file                        
 ````
 
 ### 🐳 Example 1 - Docker Run
@@ -96,6 +99,8 @@ Isma;Abdan;isma.abdan@apple.de;Gabelstaplerfahrer;MALE;Huelva,Spanien;None;None;
 
 [i] Successfully crawled 2 Apple employees. Hurray ^_-
 ````
+
+Optionally, you can use the CLI parameters `--output-json` and `--output-csv` to store the results as JSON or CSV.
 
 ## 💥 Limitations
 

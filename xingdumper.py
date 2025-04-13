@@ -1,13 +1,12 @@
 import requests
 import json
 import argparse
+import csv
 from argparse import RawTextHelpFormatter
 from datetime import datetime
 
-# you may store your session cookie here persistently
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 
-# converting german umlauts
 special_char_map = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
 
 format_examples = '''
@@ -21,139 +20,154 @@ format_examples = '''
 parser = argparse.ArgumentParser("xingdumper.py", formatter_class=RawTextHelpFormatter)
 parser.add_argument("--url", metavar='<xing-url>', help="A XING company url - https://xing.com/pages/<company>", type=str, required=True)
 parser.add_argument("--count", metavar='<number>', help="Amount of employees to extract - max. 2999", type=int, required=False)
-parser.add_argument("--cookie", metavar='<cookie>', help="XING 'login' cookie for authentication", type=str, required=False,)
-parser.add_argument("--full", help="Dump additional contact details (slow) - email, phone, fax, mobile", required=False, action='store_true')
-parser.add_argument("--quiet", help="Show employee results only", required=False, action='store_true')
-parser.add_argument("--email-format", help="Python string format for emails; for example:"+format_examples, required=False, type=str)
+parser.add_argument("--cookie", metavar='<cookie>', help="XING 'login' cookie for authentication", type=str, required=False)
+parser.add_argument("--full", help="Dump additional contact details (slow) - email, phone, fax, mobile", action='store_true')
+parser.add_argument("--email-format", help="Python string format for emails; for example:" + format_examples, metavar='<mail-format>', type=str)
+parser.add_argument("--output-json", help="Store results in json output file", metavar="<json-file>", type=str, required=False)
+parser.add_argument("--output-csv", help="Store results in csv output file", metavar="<csv-file>", type=str, required=False)
 
 args = parser.parse_args()
 url = args.url
 
-if (args.cookie):
-	LOGIN_COOKIE = args.cookie
+if args.cookie:
+    LOGIN_COOKIE = args.cookie
 
-if (args.email_format):
-	mailformat = args.email_format
-else:
-	mailformat = False
-
-if (args.count and args.count < 3000):
-	count = args.count
-else:
-	# according to XING, the result window must be less than 3000
-	count = 2999
+mailformat = args.email_format if args.email_format else False
+count = args.count if args.count and args.count < 3000 else 2999
 
 api = "https://www.xing.com/xing-one/api"
 headers = {'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'Content-type': 'application/json'}
 cookies_dict = {"login": LOGIN_COOKIE}
 
-if (url.startswith('https://www.xing.com/pages/')):
-	try:
-		before_keyword, keyword, after_keyword = url.partition('pages/')
-		company = after_keyword
+if url.startswith('https://www.xing.com/pages/'):
+    try:
+        _, _, company = url.partition('pages/')
 
-		# retrieve company id from the api
-		postdata1 = {"operationName":"EntitySubpage","variables":{"id":company,"moduleType":"employees"},"query":"query EntitySubpage($id: SlugOrID!, ) {\n entityPageEX(id: $id) {\n ... on EntityPage {\n slug\n  title\n context {\n  companyId\n }\n  }\n }\n}\n"}
-		r = requests.post(api, data=json.dumps(postdata1), headers=headers, cookies=cookies_dict, timeout=200)
-		response1 = r.json()
+        postdata1 = {"operationName":"EntitySubpage","variables":{"id":company,"moduleType":"employees"},"query":"query EntitySubpage($id: SlugOrID!, ) { entityPageEX(id: $id) { ... on EntityPage { slug title context { companyId } } } }"}
+        r = requests.post(api, data=json.dumps(postdata1), headers=headers, cookies=cookies_dict, timeout=200)
+        response1 = r.json()
+        companyID = response1["data"]["entityPageEX"]["context"]["companyId"]
+        companyTitle = response1["data"]["entityPageEX"]["title"]
 
-		companyID = response1["data"]["entityPageEX"]["context"]["companyId"]
-		
-		# retrieve employee information from the api based on previously obtained company id
-		postdata2 = {"operationName":"Employees","variables":{"consumer":"","id":companyID,"first":count,"query":{"consumer":"web.entity_pages.employees_subpage","sort":"CONNECTION_DEGREE"}},"query":"query Employees($id: SlugOrID!, $first: Int, $after: String, $query: CompanyEmployeesQueryInput!, $consumer: String! = \"\", $includeTotalQuery: Boolean = false) {\n  company(id: $id) {\n id\n totalEmployees: employees(first: 0, query: {consumer: $consumer}) @include(if: $includeTotalQuery) {\n total\n }\n employees(first: $first, after: $after, query: $query) {\n total\n edges {\n node {\n profileDetails {\n id\n firstName\n lastName\n displayName\n gender\n pageName\n location {\n displayLocation\n  }\n occupations {\n subline\n }\n }\n }\n }\n }\n }\n}\n"}
-		r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict, timeout=200)
-		response2 = r2.json()
+        postdata2 = {"operationName":"Employees","variables":{"consumer":"","id":companyID,"first":count,"query":{"consumer":"web.entity_pages.employees_subpage","sort":"CONNECTION_DEGREE"}},"query":"query Employees($id: SlugOrID!, $first: Int, $after: String, $query: CompanyEmployeesQueryInput!, $consumer: String! = \"\", $includeTotalQuery: Boolean = false) { company(id: $id) { id totalEmployees: employees(first: 0, query: {consumer: $consumer}) @include(if: $includeTotalQuery) { total } employees(first: $first, after: $after, query: $query) { total edges { node { profileDetails { id firstName lastName displayName gender pageName location { displayLocation } occupations { subline } } } } } } }"}
+        r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict, timeout=200)
+        response2 = r2.json()
 
-		if not args.quiet:
+        employees = []
 
-			print("""\
+        if not args.output_json and not args.output_csv:
+            print()
+            print("[i] Company Name: " + companyTitle)
+            print("[i] Company X-ID: " + companyID)
+            print("[i] Company Slug: " + company)
+            print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+            if mailformat:
+                print("[i] Email Format: " + mailformat)
+            print()
+        else:
+        	print()
 
-▒██   ██▒ ██▓ ███▄    █   ▄████ ▓█████▄  █    ██  ███▄ ▄███▓ ██▓███  ▓█████  ██▀███  
-▒▒ █ █ ▒░▓██▒ ██ ▀█   █  ██▒ ▀█▒▒██▀ ██▌ ██  ▓██▒▓██▒▀█▀ ██▒▓██░  ██▒▓█   ▀ ▓██ ▒ ██▒
-░░  █   ░▒██▒▓██  ▀█ ██▒▒██░▄▄▄░░██   █▌▓██  ▒██░▓██    ▓██░▓██░ ██▓▒▒███   ▓██ ░▄█ ▒
- ░ █ █ ▒ ░██░▓██▒  ▐▌██▒░▓█  ██▓░▓█▄   ▌▓▓█  ░██░▒██    ▒██ ▒██▄█▓▒ ▒▒▓█  ▄ ▒██▀▀█▄  
-▒██▒ ▒██▒░██░▒██░   ▓██░░▒▓███▀▒░▒████▓ ▒▒█████▓ ▒██▒   ░██▒▒██▒ ░  ░░▒████▒░██▓ ▒██▒
-▒▒ ░ ░▓ ░░▓  ░ ▒░   ▒ ▒  ░▒   ▒  ▒▒▓  ▒ ░▒▓▒ ▒ ▒ ░ ▒░   ░  ░▒▓▒░ ░  ░░░ ▒░ ░░ ▒▓ ░▒▓░
-░░   ░▒ ░ ▒ ░░ ░░   ░ ▒░  ░   ░  ░ ▒  ▒ ░░▒░ ░ ░ ░  ░      ░░▒ ░      ░ ░  ░  ░▒ ░ ▒░
- ░    ░   ▒ ░   ░   ░ ░ ░ ░   ░  ░ ░  ░  ░░░ ░ ░ ░      ░   ░░          ░     ░░   ░ 
- ░    ░   ░           ░       ░    ░       ░            ░               ░  ░  by LRVT
-			""")
+        for emp in response2['data']['company']['employees']['edges']:
+            pd = emp['node']['profileDetails']
+            firstname = pd['firstName']
+            lastname = pd['lastName']
+            gender = pd.get('gender', 'N/A')
+            location = pd.get('location', {}).get('displayLocation', '').replace('**','').replace(', ',',')
+            pagename = pd.get('pageName', '')
+            profile_url = f"https://www.xing.com/profile/{pagename}"
+            try:
+                position = pd['occupations'][0]['subline']
+            except:
+                position = "None"
 
-			print("[i] Company Name: " + response1["data"]["entityPageEX"]["title"])
-			print("[i] Company X-ID: " + companyID)
-			print("[i] Company Slug: " + company)
-			print("[i] Dumping Date: " + datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-			if mailformat:
-				print("[i] Email Format: " + mailformat)
-			print()
+            employee_entry = {
+                "firstname": firstname,
+                "lastname": lastname,
+                "position": position,
+                "gender": gender,
+                "location": location,
+                "profile": profile_url
+            }
 
-		if not mailformat:
-			if args.full:
-				legende = "Firstname;Lastname;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile"
-			else:
-				legende = "Firstname;Lastname;Position;Gender;Location;Profile"
-		else:
-			if args.full:
-				legende = "Firstname;Lastname;Email;Position;Gender;Location;E-Mail;Fax;Mobile;Phone;Profile"
-			else:
-				legende = "Firstname;Lastname;Email;Position;Gender;Location;Profile"
-		
-		print(legende)
+            if mailformat:
+                firstname_clean = firstname.lower().replace(".", "").translate(special_char_map)
+                lastname_clean = lastname.lower().replace(".", "").translate(special_char_map)
+                employee_entry['email'] = mailformat.format(firstname_clean, lastname_clean)
 
-		dump_count = 0
+            if args.full:
+                postdata3 = {"operationName":"getXingId","variables":{"profileId":pagename},"query":"query getXingId($profileId: SlugOrID!, $actionsFilter: [AvailableAction!]) { profileModules(id: $profileId) { __typename xingIdModule(actionsFilter: $actionsFilter) { xingId { status { localizationValue __typename } __typename } __typename ...xingIdContactDetails } } } fragment xingIdContactDetails on XingIdModule { contactDetails { business { email fax { phoneNumber } mobile { phoneNumber } phone { phoneNumber } } __typename } __typename }"}
+                r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict, timeout=200)
+                r3data = r3.json()
+                try:
+                    contact = r3data['data']['profileModules']['xingIdModule']['contactDetails']['business']
+                    employee_entry['business_email'] = contact.get('email', 'None')
+                    employee_entry['fax'] = contact.get('fax', {}).get('phoneNumber', 'None')
+                    employee_entry['mobile'] = contact.get('mobile', {}).get('phoneNumber', 'None')
+                    employee_entry['phone'] = contact.get('phone', {}).get('phoneNumber', 'None')
+                except:
+                    employee_entry['business_email'] = employee_entry['fax'] = employee_entry['mobile'] = employee_entry['phone'] = 'None'
 
-		# loop over employees
-		for employee in response2['data']['company']['employees']['edges']:
-			dump_count += 1
-			firstname = employee['node']['profileDetails']['firstName']
-			lastname = employee['node']['profileDetails']['lastName']
-			try:
-				position = employee['node']['profileDetails']['occupations'][0]['subline']
-			except:
-				position = "None"
-			gender = employee['node']['profileDetails']['gender']
-			location = employee['node']['profileDetails']['location']['displayLocation'].replace('**','').replace(', ',',')
-			pagename = employee['node']['profileDetails']['pageName']
+            employees.append(employee_entry)
 
-			if args.full:
-				# dump additional contact details for each employee. Most often is "None", so no default api queries for this data
-				postdata3 = {"operationName":"getXingId","variables":{"profileId":pagename},"query":"query getXingId($profileId: SlugOrID!, $actionsFilter: [AvailableAction!]) {\n  profileModules(id: $profileId) {\n    __typename\n    xingIdModule(actionsFilter: $actionsFilter) {\n      xingId {\n        status {\n          localizationValue\n          __typename\n        }\n        __typename\n      }\n      __typename\n      ...xingIdContactDetails\n       }\n  }\n}\n\nfragment xingIdContactDetails on XingIdModule {\n  contactDetails {\n    business {\n          email\n      fax {\n        phoneNumber\n   }\n      mobile {\n        phoneNumber\n  }\n      phone {\n        phoneNumber\n   }\n   }\n        __typename\n  }\n  __typename\n}\n"}
-				r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict, timeout=200)
-				response3 = r3.json()
-				try:
-					# try to extract contact details
-					email = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['email']
-					fax = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['fax']['phoneNumber']
-					mobile = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['mobile']['phoneNumber']
-					phone = response3['data']['profileModules']['xingIdModule']['contactDetails']['business']['phone']['phoneNumber']
-				except:
-					# if contact details are missing in the API response, set to 'None'
-					email = "None"
-					fax = "None"
-					mobile = "None"
-					phone = "None"
-				
-				if not mailformat:
-					# print employee information as Comma Separated Values (CSV)
-					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
-				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".","").translate(special_char_map),lastname.lower().replace(".","").translate(special_char_map)) + ";" + position + ";" + gender + ";" + location + ";" + str(email) + ";" + str(fax) + ";" + str(mobile) + ";" + str(phone) + ";" + "https://www.xing.com/profile/" + pagename)
-			else:
-				if not mailformat:
-					print(firstname + ";" + lastname + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
-				else:
-					print(firstname + ";" + lastname + ";" + mailformat.format(firstname.lower().replace(".","").translate(special_char_map),lastname.lower().replace(".","").translate(special_char_map)) + ";" + position + ";" + gender + ";" + location + ";" + "https://www.xing.com/profile/" + pagename)
-		
-		if not args.quiet:
-			print()
-			print("[i] Successfully crawled " + str(dump_count) + " " + response1["data"]["entityPageEX"]["title"] + " employees. Hurray ^_-")
-	
-	except Exception as e:
-		print()
-		print("[!] Exception. Either API has changed and this script is broken or authentication failed.")
-		print("    > Set 'LOGIN_COOKIE' variable permanently in script or use the '--cookie' CLI flag!")
-		print("[debug] " + str(e))
+        if not args.output_json and not args.output_csv:
+            print("Firstname;Lastname;" + ("Email;" if mailformat else "") + "Position;Gender;Location;" + ("E-Mail;Fax;Mobile;Phone;" if args.full else "") + "Profile")
+            for emp in employees:
+                values = [emp['firstname'], emp['lastname']]
+                if mailformat:
+                    values.append(emp['email'])
+                values += [emp['position'], emp['gender'], emp['location']]
+                if args.full:
+                    values += [emp['business_email'], emp['fax'], emp['mobile'], emp['phone']]
+                values.append(emp['profile'])
+                print(";".join(values))
+            print()
+
+        if args.output_json:
+            try:
+                output = {
+                    "company_id": companyID,
+                    "company_url": url,
+                    "company_slug": company,
+                    "timestamp": datetime.now().isoformat(),
+                    "employees": employees
+                }
+                with open(args.output_json, 'w', encoding='utf-8') as f:
+                    json.dump(output, f, ensure_ascii=False, indent=4)
+                print(f"[i] Results written to JSON: {args.output_json}")
+            except Exception as e:
+                print(f"[!] Error writing JSON: {e}")
+
+        if args.output_csv:
+            try:
+                with open(args.output_csv, 'w', newline='', encoding='utf-8') as f:
+                    writer = csv.writer(f, delimiter=';')
+                    headers = ["Firstname", "Lastname"]
+                    if mailformat:
+                        headers.append("Email")
+                    headers += ["Position", "Gender", "Location"]
+                    if args.full:
+                        headers += ["E-Mail", "Fax", "Mobile", "Phone"]
+                    headers.append("Profile")
+                    writer.writerow(headers)
+                    for emp in employees:
+                        row = [emp['firstname'], emp['lastname']]
+                        if mailformat:
+                            row.append(emp['email'])
+                        row += [emp['position'], emp['gender'], emp['location']]
+                        if args.full:
+                            row += [emp['business_email'], emp['fax'], emp['mobile'], emp['phone']]
+                        row.append(emp['profile'])
+                        writer.writerow(row)
+                print(f"[i] Results written to CSV: {args.output_csv}")
+            except Exception as e:
+                print(f"[!] Error writing CSV: {e}")
+
+        print(f"[i] Successfully crawled {len(employees)} {companyTitle} employees. Hurray ^_-")
+
+    except Exception as e:
+        print("\n[!] Exception. Either API has changed and this script is broken or authentication failed.")
+        print("    > Set 'LOGIN_COOKIE' variable permanently in script or use the '--cookie' CLI flag!")
+        print(f"[debug] {e}")
 else:
-	print()
-	print("[!] Invalid URL provided.")
-	print("[i] Example URL: 'https://www.xing.com/pages/appleretaildeutschlandgmbh'")
+    print("\n[!] Invalid URL provided.")
+    print("[i] Example URL: 'https://www.xing.com/pages/appleretaildeutschlandgmbh'")
