@@ -1,3 +1,10 @@
+## [0.2.1](https://github.com/l4rm4nd/XingDumper/compare/v0.2.0...v0.2.1) (2025-04-13)
+
+
+### Bug Fixes
+
+* re-add logo ([f730313](https://github.com/l4rm4nd/XingDumper/commit/f7303134c174f15c5016fad61cc6538488fd5c12))
+
 ## [0.2.0](https://github.com/l4rm4nd/XingDumper/compare/v0.1.4...v0.2.0) (2025-04-13)
 
 
@@ -25,11 +32,4 @@
 ### Bug Fixes
 
 * **docker:** upgrade base python image ([8603e68](https://github.com/l4rm4nd/XingDumper/commit/8603e682c0971bce4bb3a5fc20867a6fed919c68))
-
-## [0.1.1](https://github.com/l4rm4nd/XingDumper/compare/v0.1.0...v0.1.1) (2024-07-19)
-
-
-### Bug Fixes
-
-* **ci:** minor version series tag for dockerhub ([ba18e0c](https://github.com/l4rm4nd/XingDumper/commit/ba18e0c3534f11dbd809e9f507ddf47314ce294b))
 
