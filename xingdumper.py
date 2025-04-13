@@ -5,8 +5,10 @@ import csv
 from argparse import RawTextHelpFormatter
 from datetime import datetime
 
+# you may store your session cookie here persistently
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
 
+# converting german umlauts
 special_char_map = {ord('ä'):'ae', ord('ü'):'ue', ord('ö'):'oe', ord('ß'):'ss'}
 
 format_examples = '''
@@ -32,8 +34,16 @@ url = args.url
 if args.cookie:
     LOGIN_COOKIE = args.cookie
 
-mailformat = args.email_format if args.email_format else False
-count = args.count if args.count and args.count < 3000 else 2999
+if (args.email_format):
+    mailformat = args.email_format
+else:
+    mailformat = False
+
+if (args.count and args.count < 3000):
+    count = args.count
+else:
+    # according to XING, the result window must be less than 3000
+    count = 2999
 
 api = "https://www.xing.com/xing-one/api"
 headers = {'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)', 'Content-type': 'application/json'}
@@ -43,12 +53,14 @@ if url.startswith('https://www.xing.com/pages/'):
     try:
         _, _, company = url.partition('pages/')
 
+        # retrieve company id from the api
         postdata1 = {"operationName":"EntitySubpage","variables":{"id":company,"moduleType":"employees"},"query":"query EntitySubpage($id: SlugOrID!, ) { entityPageEX(id: $id) { ... on EntityPage { slug title context { companyId } } } }"}
         r = requests.post(api, data=json.dumps(postdata1), headers=headers, cookies=cookies_dict, timeout=200)
         response1 = r.json()
         companyID = response1["data"]["entityPageEX"]["context"]["companyId"]
         companyTitle = response1["data"]["entityPageEX"]["title"]
 
+        # retrieve employee information from the api based on previously obtained company id
         postdata2 = {"operationName":"Employees","variables":{"consumer":"","id":companyID,"first":count,"query":{"consumer":"web.entity_pages.employees_subpage","sort":"CONNECTION_DEGREE"}},"query":"query Employees($id: SlugOrID!, $first: Int, $after: String, $query: CompanyEmployeesQueryInput!, $consumer: String! = \"\", $includeTotalQuery: Boolean = false) { company(id: $id) { id totalEmployees: employees(first: 0, query: {consumer: $consumer}) @include(if: $includeTotalQuery) { total } employees(first: $first, after: $after, query: $query) { total edges { node { profileDetails { id firstName lastName displayName gender pageName location { displayLocation } occupations { subline } } } } } } }"}
         r2 = requests.post(api, data=json.dumps(postdata2), headers=headers, cookies=cookies_dict, timeout=200)
         response2 = r2.json()
@@ -79,6 +91,7 @@ if url.startswith('https://www.xing.com/pages/'):
             print("[i] Email Format: " + mailformat)
         print()
 
+        # loop over employees
         for emp in response2['data']['company']['employees']['edges']:
             pd = emp['node']['profileDetails']
             firstname = pd['firstName']
@@ -107,21 +120,25 @@ if url.startswith('https://www.xing.com/pages/'):
                 employee_entry['email'] = mailformat.format(firstname_clean, lastname_clean)
 
             if args.full:
+                # dump additional contact details for each employee. Most often is "None", so no default api queries for this data
                 postdata3 = {"operationName":"getXingId","variables":{"profileId":pagename},"query":"query getXingId($profileId: SlugOrID!, $actionsFilter: [AvailableAction!]) { profileModules(id: $profileId) { __typename xingIdModule(actionsFilter: $actionsFilter) { xingId { status { localizationValue __typename } __typename } __typename ...xingIdContactDetails } } } fragment xingIdContactDetails on XingIdModule { contactDetails { business { email fax { phoneNumber } mobile { phoneNumber } phone { phoneNumber } } __typename } __typename }"}
                 r3 = requests.post(api, data=json.dumps(postdata3), headers=headers, cookies=cookies_dict, timeout=200)
                 r3data = r3.json()
                 try:
+                    # try to extract contact details
                     contact = r3data['data']['profileModules']['xingIdModule']['contactDetails']['business']
                     employee_entry['business_email'] = contact.get('email', 'None')
                     employee_entry['fax'] = contact.get('fax', {}).get('phoneNumber', 'None')
                     employee_entry['mobile'] = contact.get('mobile', {}).get('phoneNumber', 'None')
                     employee_entry['phone'] = contact.get('phone', {}).get('phoneNumber', 'None')
                 except:
+                    # if contact details are missing in the API response, set to 'None'
                     employee_entry['business_email'] = employee_entry['fax'] = employee_entry['mobile'] = employee_entry['phone'] = 'None'
 
             employees.append(employee_entry)
 
         if not args.output_json and not args.output_csv:
+            # print employee information as Comma Separated Values (CSV)
             print("Firstname;Lastname;" + ("Email;" if mailformat else "") + "Position;Gender;Location;" + ("E-Mail;Fax;Mobile;Phone;" if args.full else "") + "Profile")
             for emp in employees:
                 values = [emp['firstname'], emp['lastname']]
