@@ -1,3 +1,10 @@
+## [0.2.2](https://github.com/l4rm4nd/XingDumper/compare/v0.2.1...v0.2.2) (2026-04-18)
+
+
+### Bug Fixes
+
+* freeze libs and add semgrep + sbom scanning ([80b1b29](https://github.com/l4rm4nd/XingDumper/commit/80b1b297c8ff338e294a3480ec20f3ff01d9ee0f))
+
 ## [0.2.1](https://github.com/l4rm4nd/XingDumper/compare/v0.2.0...v0.2.1) (2025-04-13)
 
 
@@ -25,11 +32,4 @@
 ### Bug Fixes
 
 * **python:** add timeouts for requests ([50b53d1](https://github.com/l4rm4nd/XingDumper/commit/50b53d1a144bd5bfaf13755dea945731816b4d51))
-
-## [0.1.2](https://github.com/l4rm4nd/XingDumper/compare/v0.1.1...v0.1.2) (2024-07-21)
-
-
-### Bug Fixes
-
-* **docker:** upgrade base python image ([8603e68](https://github.com/l4rm4nd/XingDumper/commit/8603e682c0971bce4bb3a5fc20867a6fed919c68))
 
