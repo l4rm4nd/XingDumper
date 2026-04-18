@@ -5,6 +5,7 @@ COPY requirements.txt xingdumper.py /app/.
 RUN pip3 install -r /app/requirements.txt
 
 WORKDIR /app
+USER nobody
 ENTRYPOINT [ "python", "xingdumper.py"]
 
 CMD [ "python", "xingdumper.py", "--help"]
