@@ -71,6 +71,16 @@ pip install -r requirements.txt
 python3 xingdumper.py --url https://www.xing.com/pages/audiag --cookie '<cookie>' --email-format '{0}.{1}@apple.de'
 ````
 
+### 🌍 Example 3 - Browser Dev Console
+
+1. Open Xing and log in
+2. Open the Xing company site with `/pages/xxyy`
+3. Open developer console (CTRL+SHIFT+i), paste the content of `console.js` and press enter
+4. Define email format and provide email domain in JS popups
+5. Confirm to start
+
+Results printed in dev console and downloaded as CSV.
+
 ## 💎 Outputs
 
 The script will return employee data as semi-colon separated values (like CSV):
