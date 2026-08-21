@@ -81,6 +81,9 @@ python3 xingdumper.py --url https://www.xing.com/pages/audiag --cookie '<cookie>
 
 Results printed in dev console and downloaded as CSV.
 
+> [!TIP]
+> You can also prepend `javascript:` and save it as a browser bookmarklet.
+
 ## 💎 Outputs
 
 The script will return employee data as semi-colon separated values (like CSV):
