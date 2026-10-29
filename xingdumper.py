@@ -4,6 +4,7 @@ import argparse
 import csv
 from argparse import RawTextHelpFormatter
 from datetime import datetime
+import urllib.parse
 
 # you may store your session cookie here persistently
 LOGIN_COOKIE = "<INSERT-YOUR-XING-LOGIN-COOKIE-VALUE>"
@@ -52,6 +53,9 @@ cookies_dict = {"login": LOGIN_COOKIE}
 if url.startswith('https://www.xing.com/pages/'):
     try:
         _, _, company = url.partition('pages/')
+        # the API expects the raw slug: decode percent-encoded URLs
+        # (browser-copied) and drop any trailing path or query
+        company = urllib.parse.unquote(company.split('/')[0].split('?')[0])
 
         # retrieve company id from the api
         postdata1 = {"operationName":"EntitySubpage","variables":{"id":company,"moduleType":"employees"},"query":"query EntitySubpage($id: SlugOrID!, ) { entityPageEX(id: $id) { ... on EntityPage { slug title context { companyId } } } }"}
@@ -93,12 +97,15 @@ if url.startswith('https://www.xing.com/pages/'):
 
         # loop over employees
         for emp in response2['data']['company']['employees']['edges']:
-            pd = emp['node']['profileDetails']
-            firstname = pd['firstName']
-            lastname = pd['lastName']
-            gender = pd.get('gender', 'N/A')
-            location = pd.get('location', {}).get('displayLocation', '').replace('**','').replace(', ',',')
-            pagename = pd.get('pageName', '')
+            # hidden/deleted profiles come back with profileDetails = null
+            pd = (emp.get('node') or {}).get('profileDetails')
+            if not pd or not pd.get('pageName'):
+                continue
+            firstname = pd.get('firstName') or ''
+            lastname = pd.get('lastName') or ''
+            gender = pd.get('gender') or 'N/A'
+            location = ((pd.get('location') or {}).get('displayLocation') or '').replace('**','').replace(', ',',')
+            pagename = pd['pageName']
             profile_url = f"https://www.xing.com/profile/{pagename}"
             try:
                 position = pd['occupations'][0]['subline']

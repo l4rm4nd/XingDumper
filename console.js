@@ -124,7 +124,14 @@
     const companyInput = currentSlugMatch
       ? currentSlugMatch[1]
       : prompt("XING company URL or slug", "https://www.xing.com/pages/appleretaildeutschlandgmbh");
-    const companySlug = getSlugFromInput(companyInput);
+    // The API expects the raw slug: decode percent-encoded URLs (browser-copied).
+    const rawSlug = getSlugFromInput(companyInput);
+    let companySlug = rawSlug;
+    try {
+      companySlug = decodeURIComponent(rawSlug);
+    } catch {
+      // malformed escape sequence - use the slug as given
+    }
 
     if (!companySlug) {
       throw new Error("No valid XING company slug provided.");
